@@ -3,6 +3,12 @@ import re
 import csv
 from collections import defaultdict
 
+# Configuration & Hardcoded Constants
+ZID_PREFIX = "20260715202804"
+YOUTUBE_LIST_FILE = "20260715200613-3000-oxford-words-in-4.tsv"
+OXFORD_3000_REF_FILE = "20260715160822-oxford-3000.en.tsv"
+OXFORD_5000_REF_FILE = "20260715165539-oxford-5000-expanded.en.tsv"
+
 def parse_line_to_words(line):
     # Remove text in parentheses, e.g. "bank (river)" -> "bank"
     cleaned = re.sub(r'\s*\([^)]*\)', '', line)
@@ -33,11 +39,11 @@ def LevenshteinDistance(s1, s2):
 def run_comparison():
     # Relative Paths to data inside this repo
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    file2_path = os.path.join(base_dir, "20260715200613-3000-oxford-words-in-4.tsv")
+    file2_path = os.path.join(base_dir, YOUTUBE_LIST_FILE)
 
     # Local paths for the Oxford reference databases with CEFR tags
-    workspace_ox3000 = os.path.join(base_dir, "20260715160822-oxford-3000.en.tsv")
-    workspace_ox5000 = os.path.join(base_dir, "20260715165539-oxford-5000-expanded.en.tsv")
+    workspace_ox3000 = os.path.join(base_dir, OXFORD_3000_REF_FILE)
+    workspace_ox5000 = os.path.join(base_dir, OXFORD_5000_REF_FILE)
 
     # 1. Load File 1 (Oxford 3000 Reference Database) and CEFR database mapping
     desktop_ox3000_lines = []
@@ -133,10 +139,10 @@ def run_comparison():
             else:
                 superfluous_by_status['External Word (Not in Oxford 3000/5000)'].append(sw)
 
-    # Generate Markdown Report and TSVs with ZID prefix 20260715202804
-    report_path = os.path.join(base_dir, "20260715202804-dictionary-comparison-results.md")
-    missing_tsv_path = os.path.join(base_dir, "20260715202804-missing-words.tsv")
-    superfluous_tsv_path = os.path.join(base_dir, "20260715202804-superfluous-words.tsv")
+    # Generate Markdown Report and TSVs with ZID prefix
+    report_path = os.path.join(base_dir, f"{ZID_PREFIX}-dictionary-comparison-results.md")
+    missing_tsv_path = os.path.join(base_dir, f"{ZID_PREFIX}-missing-words.tsv")
+    superfluous_tsv_path = os.path.join(base_dir, f"{ZID_PREFIX}-superfluous-words.tsv")
 
     # Clean up old un-prefixed report if exists
     old_report_path = os.path.join(base_dir, "dictionary_comparison_results.md")
@@ -152,14 +158,14 @@ def run_comparison():
         f.write("This report compares the original **Oxford 3000** wordlist and the **YouTube Subtitles 3000 Words in 4** list.\n\n")
         
         f.write("## Executive Summary\n")
-        f.write("- **Oxford 3000 File:** `20260715160822-oxford-3000.en.tsv`\n")
-        f.write("- **YouTube Subtitles File:** `20260715200613-3000-oxford-words-in-4.tsv`\n")
+        f.write(f"- **Oxford 3000 File:** `{OXFORD_3000_REF_FILE}`\n")
+        f.write(f"- **YouTube Subtitles File:** `{YOUTUBE_LIST_FILE}`\n")
         f.write("- **Coverage Verdict:** **The second file does NOT cover the first file.**\n")
         
         coverage_percentage = (len(set_desktop_ox3000 & set_desktop_youtube) / len(set_desktop_ox3000)) * 100
         f.write(f"  - **Direct Word Match Coverage:** {coverage_percentage:.2f}% ({len(set_desktop_ox3000 & set_desktop_youtube)} / {len(set_desktop_ox3000)} words)\n")
-        f.write(f"  - **Missing Words from Oxford 3000:** {len(missing_from_youtube)} words (detailed in [20260715202804-missing-words.tsv](./20260715202804-missing-words.tsv))\n")
-        f.write(f"  - **Superfluous Words in YouTube List:** {len(superfluous_in_youtube)} words (detailed in [20260715202804-superfluous-words.tsv](./20260715202804-superfluous-words.tsv))\n\n")
+        f.write(f"  - **Missing Words from Oxford 3000:** {len(missing_from_youtube)} words (detailed in [{ZID_PREFIX}-missing-words.tsv](./{ZID_PREFIX}-missing-words.tsv))\n")
+        f.write(f"  - **Superfluous Words in YouTube List:** {len(superfluous_in_youtube)} words (detailed in [{ZID_PREFIX}-superfluous-words.tsv](./{ZID_PREFIX}-superfluous-words.tsv))\n\n")
         
         f.write("> [!IMPORTANT]\n")
         f.write("> **Key Finding:** The YouTube subtitles list is missing major basic vocabulary words from the Oxford 3000 (such as `able`, `absolute`, `accuse`, `agenda`, etc.) and instead contains advanced, higher-level vocabulary words from the Oxford 5000 Expanded list (such as `academy`, `accessible`, `accessory`, `accord`, `accountant`, etc.). This indicates that the YouTube list was likely generated from a different version of the dictionary, or was mixed with Oxford 5000 words while dropping basic Oxford 3000 words.\n\n")
@@ -217,11 +223,11 @@ def run_comparison():
         f.write("\n")
         
         f.write("## Conclusion\n")
-        f.write("The YouTube subtitles list `20260715200613-3000-oxford-words-in-4.tsv` **does not cover** the original Oxford 3000 list. Instead, it has a significant mismatch of approximately **23%**, representing a mix of:\n")
+        f.write(f"The YouTube subtitles list `{YOUTUBE_LIST_FILE}` **does not cover** the original Oxford 3000 list. Instead, it has a significant mismatch of approximately **23%**, representing a mix of:\n")
         f.write("1. **Omission of standard basic vocabulary** (A1-B2 levels, 700+ words missing).\n")
         f.write("2. **Inclusion of advanced C1 level vocabulary** from the Oxford 5000 (such as `academy`, `accessible`, `accessory`, etc.).\n")
         f.write("3. **Spelling differences** (e.g. `analyse` vs `analyze`, `any more` vs `anymore`).\n\n")
-        f.write("If you want a wordlist that fully covers the Oxford 3000, you should use the clean, curated `20260715160822-oxford-3000.en.tsv` from the project repository rather than the YouTube subtitles extraction.\n")
+        f.write(f"If you want a wordlist that fully covers the Oxford 3000, you should use the clean, curated `{OXFORD_3000_REF_FILE}` from the project repository rather than the YouTube subtitles extraction.\n")
 
     # Write Missing Words TSV
     with open(missing_tsv_path, 'w', encoding='utf-8', newline='') as f:

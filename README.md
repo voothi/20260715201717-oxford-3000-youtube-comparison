@@ -7,6 +7,7 @@ This repository is dedicated to verifying the coverage of the YouTube subtitles 
 - [Repository Structure](#repository-structure)
 - [Running the Analysis](#running-the-analysis)
 - [Running the Unit Tests](#running-the-unit-tests)
+- [Related Projects](#related-projects)
 
 ---
 
@@ -35,8 +36,9 @@ U:\voothi\20260715201717-oxford-3000-youtube-comparison\
 │   └── compare_dicts.py                     # Normalized comparison and classification script
 ├── tests/
 │   └── test_compare.py                      # Unit tests for comparison functions
-├── 20260715200533-oxford-3000.tsv           # Source Oxford 3000 list
 ├── 20260715200613-3000-oxford-words-in-4.tsv # YouTube subtitles wordlist to verify
+├── 20260715160822-oxford-3000.en.tsv        # Oxford 3000 reference database with levels
+├── 20260715165539-oxford-5000-expanded.en.tsv # Oxford 5000 expanded reference database
 ├── 20260713121030-learn-3000-oxford-words.* # Video subtitles and text files (en/ru)
 ├── 20260713162200-hi-rose-good-morning.*    # Kardenwort Core export files
 ├── 20260715202804-dictionary-comparison-results.md # Markdown findings report
@@ -57,7 +59,7 @@ To run the dictionary comparison script and update the results:
 python scripts/compare_dicts.py
 ```
 
-The script will read the datasets, match them against spelling rules and CEFR level definitions from the sibling `20260715190122-oxford-3000-5000` repository, and write a detailed analysis markdown report to [20260715202804-dictionary-comparison-results.md](./20260715202804-dictionary-comparison-results.md) along with detailed TSV lists of missing and superfluous words to [20260715202804-missing-words.tsv](./20260715202804-missing-words.tsv) and [20260715202804-superfluous-words.tsv](./20260715202804-superfluous-words.tsv).
+The script will read the datasets, match them against spelling rules and CEFR level definitions from the local reference databases, and write a detailed analysis markdown report to [20260715202804-dictionary-comparison-results.md](./20260715202804-dictionary-comparison-results.md) along with detailed TSV lists of missing and superfluous words to [20260715202804-missing-words.tsv](./20260715202804-missing-words.tsv) and [20260715202804-superfluous-words.tsv](./20260715202804-superfluous-words.tsv).
 
 [Return to Top](#oxford-3000-youtube-comparison)
 
@@ -66,5 +68,13 @@ Execute the unit test suite from the terminal:
 ```powershell
 python tests/test_compare.py
 ```
+
+[Return to Top](#oxford-3000-youtube-comparison)
+
+---
+
+## Related Projects
+- **Oxford Curation Project:** [Oxford 3000/5000 Wordlist Curation & Caching Pipeline](../20260715190122-oxford-3000-5000/README.md)
+- **Kardenwort Core:** [Kardenwort Core Extraction Project](../20241223170748-kardenwort/README.md)
 
 [Return to Top](#oxford-3000-youtube-comparison)

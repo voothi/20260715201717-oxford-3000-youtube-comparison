@@ -3,7 +3,7 @@
 This report compares the original **Oxford 3000** wordlist and the **YouTube Subtitles 3000 Words in 4** list.
 
 ## Executive Summary
-- **Oxford 3000 File:** `20260715200533-oxford-3000.tsv`
+- **Oxford 3000 File:** `20260715160822-oxford-3000.en.tsv`
 - **YouTube Subtitles File:** `20260715200613-3000-oxford-words-in-4.tsv`
 - **Coverage Verdict:** **The second file does NOT cover the first file.**
   - **Direct Word Match Coverage:** 76.46% (2277 / 2978 words)
@@ -16,7 +16,7 @@ This report compares the original **Oxford 3000** wordlist and the **YouTube Sub
 ## File Statistics
 | Attribute | Oxford 3000 (File 1) | YouTube Wordlist (File 2) |
 | --- | --- | --- |
-| **Total Lines** | 3001 | 2999 |
+| **Total Entries** | 3001 | 2999 |
 | **Unique Words (Parsed)** | 2978 | 2956 |
 | **Multi-word entries (e.g., 'a, an')** | 38 lines | 0 lines (words are strictly split) |
 

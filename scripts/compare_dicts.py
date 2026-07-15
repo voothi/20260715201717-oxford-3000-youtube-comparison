@@ -33,28 +33,38 @@ def LevenshteinDistance(s1, s2):
 def run_comparison():
     # Relative Paths to data inside this repo
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    file1_path = os.path.join(base_dir, "20260715200533-oxford-3000.tsv")
     file2_path = os.path.join(base_dir, "20260715200613-3000-oxford-words-in-4.tsv")
 
-    # Sibling path for the Oxford reference databases with CEFR tags
-    sibling_repo = os.path.join(os.path.dirname(base_dir), "20260715190122-oxford-3000-5000")
-    workspace_ox3000 = os.path.join(sibling_repo, "20260715160822-oxford-3000.en.tsv")
-    workspace_ox5000 = os.path.join(sibling_repo, "20260715165539-oxford-5000-expanded.en.tsv")
+    # Local paths for the Oxford reference databases with CEFR tags
+    workspace_ox3000 = os.path.join(base_dir, "20260715160822-oxford-3000.en.tsv")
+    workspace_ox5000 = os.path.join(base_dir, "20260715165539-oxford-5000-expanded.en.tsv")
 
-    # 1. Load File 1
+    # 1. Load File 1 (Oxford 3000 Reference Database) and CEFR database mapping
     desktop_ox3000_lines = []
-    with open(file1_path, 'r', encoding='utf-8') as f:
-        desktop_ox3000_lines = [line.strip() for line in f if line.strip()]
-
     desktop_ox3000_words = {}
-    for idx, line in enumerate(desktop_ox3000_lines, 1):
-        parsed = parse_line_to_words(line)
-        for w in parsed:
-            if w not in desktop_ox3000_words:
-                desktop_ox3000_words[w] = []
-            desktop_ox3000_words[w].append((idx, line))
+    workspace_ox3000_db = {}
 
-    # 2. Load File 2
+    if os.path.exists(workspace_ox3000):
+        with open(workspace_ox3000, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f, delimiter='\t')
+            header = next(reader)
+            for idx, row in enumerate(reader, 1):
+                if row:
+                    raw_word = row[0]
+                    desktop_ox3000_lines.append(raw_word)
+                    
+                    parsed = parse_line_to_words(raw_word)
+                    for w in parsed:
+                        if w not in desktop_ox3000_words:
+                            desktop_ox3000_words[w] = []
+                        desktop_ox3000_words[w].append((idx, raw_word))
+                    
+                    if len(row) >= 4:
+                        level = row[3]
+                        for cw in parsed:
+                            workspace_ox3000_db[cw] = level
+
+    # 2. Load File 2 (YouTube Subtitles Wordlist)
     desktop_youtube_lines = []
     with open(file2_path, 'r', encoding='utf-8') as f:
         desktop_youtube_lines = [line.strip() for line in f if line.strip()]
@@ -66,20 +76,6 @@ def run_comparison():
             if w not in desktop_youtube_words:
                 desktop_youtube_words[w] = []
             desktop_youtube_words[w].append((idx, line))
-
-    # 3. Load CEFR database mapping
-    workspace_ox3000_db = {}
-    if os.path.exists(workspace_ox3000):
-        with open(workspace_ox3000, 'r', encoding='utf-8') as f:
-            reader = csv.reader(f, delimiter='\t')
-            header = next(reader)
-            for row in reader:
-                if len(row) >= 4:
-                    raw_word = row[0]
-                    level = row[3]
-                    cleaned_words = parse_line_to_words(raw_word)
-                    for cw in cleaned_words:
-                        workspace_ox3000_db[cw] = level
 
     workspace_ox5000_db = {}
     if os.path.exists(workspace_ox5000):
@@ -156,7 +152,7 @@ def run_comparison():
         f.write("This report compares the original **Oxford 3000** wordlist and the **YouTube Subtitles 3000 Words in 4** list.\n\n")
         
         f.write("## Executive Summary\n")
-        f.write("- **Oxford 3000 File:** `20260715200533-oxford-3000.tsv`\n")
+        f.write("- **Oxford 3000 File:** `20260715160822-oxford-3000.en.tsv`\n")
         f.write("- **YouTube Subtitles File:** `20260715200613-3000-oxford-words-in-4.tsv`\n")
         f.write("- **Coverage Verdict:** **The second file does NOT cover the first file.**\n")
         
@@ -168,12 +164,13 @@ def run_comparison():
         f.write("> [!IMPORTANT]\n")
         f.write("> **Key Finding:** The YouTube subtitles list is missing major basic vocabulary words from the Oxford 3000 (such as `able`, `absolute`, `accuse`, `agenda`, etc.) and instead contains advanced, higher-level vocabulary words from the Oxford 5000 Expanded list (such as `academy`, `accessible`, `accessory`, `accord`, `accountant`, etc.). This indicates that the YouTube list was likely generated from a different version of the dictionary, or was mixed with Oxford 5000 words while dropping basic Oxford 3000 words.\n\n")
         
+        multi_word_entries_count = sum(1 for line in desktop_ox3000_lines if ',' in line or '/' in line or ' ' in line)
         f.write("## File Statistics\n")
         f.write("| Attribute | Oxford 3000 (File 1) | YouTube Wordlist (File 2) |\n")
         f.write("| --- | --- | --- |\n")
-        f.write(f"| **Total Lines** | {len(desktop_ox3000_lines)} | {len(desktop_youtube_lines)} |\n")
+        f.write(f"| **Total Entries** | {len(desktop_ox3000_lines)} | {len(desktop_youtube_lines)} |\n")
         f.write(f"| **Unique Words (Parsed)** | {len(set_desktop_ox3000)} | {len(set_desktop_youtube)} |\n")
-        f.write(f"| **Multi-word entries (e.g., 'a, an')** | 38 lines | 0 lines (words are strictly split) |\n\n")
+        f.write(f"| **Multi-word entries (e.g., 'a, an')** | {multi_word_entries_count} lines | 0 lines (words are strictly split) |\n\n")
         
         f.write("## 1. Missing Words Analysis\n")
         f.write(f"A total of **{len(missing_from_youtube)}** words from the Oxford 3000 are completely missing from the YouTube subtitles list. Here is the breakdown by CEFR Level:\n\n")

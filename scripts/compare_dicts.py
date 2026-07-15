@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+"""
+ZID: 20260715202804
+Description: Compares the YouTube subtitles wordlist against the Oxford 3000 baseline list,
+             identifying missing and superfluous words, mapping them to CEFR levels, and exporting
+             Markdown and TSV reports.
+"""
+
 import os
 import re
 import csv

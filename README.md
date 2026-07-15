@@ -74,7 +74,7 @@ python tests/test_compare.py
 ---
 
 ## Related Projects
-- **Oxford Curation Project:** [Oxford 3000/5000 Wordlist Curation & Caching Pipeline](../20260715190122-oxford-3000-5000/README.md)
-- **Kardenwort Core:** [Kardenwort Core Extraction Project](../20241223170748-kardenwort/README.md)
+- **Oxford Curation Project:** [Oxford 3000/5000 Wordlist Curation & Caching Pipeline](https://github.com/voothi/20260715190122-oxford-3000-5000)
+- **Kardenwort Core:** [Kardenwort Core Extraction Project](https://github.com/voothi/20241223170748-kardenwort)
 
 [Return to Top](#oxford-3000-youtube-comparison)

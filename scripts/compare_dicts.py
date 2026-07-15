@@ -229,7 +229,7 @@ def run_comparison():
     # Write Missing Words TSV
     with open(missing_tsv_path, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, delimiter='\t')
-        writer.writerow(['Word', 'Level', 'Original_Line'])
+        writer.writerow(['Word', 'Level'])
         for mw in missing_from_youtube:
             level = workspace_ox3000_db.get(mw, 'Unknown')
             if level == 'Unknown':
@@ -237,8 +237,7 @@ def run_comparison():
                     if mw == k or mw in k.split():
                         level = v
                         break
-            orig_lines_info = ", ".join([val for idx, val in desktop_ox3000_words.get(mw, [])])
-            writer.writerow([mw, level, orig_lines_info])
+            writer.writerow([mw, level])
 
     # Write Superfluous Words TSV
     with open(superfluous_tsv_path, 'w', encoding='utf-8', newline='') as f:
